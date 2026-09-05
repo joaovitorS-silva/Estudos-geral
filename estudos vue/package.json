@@ -1,0 +1,7 @@
+{
+  "name": "estudos-vue-workspace",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix vue-estudo run dev --"
+  }
+}
