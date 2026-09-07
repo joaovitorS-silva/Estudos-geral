@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Environment and secrets
+.env
+*.env.local
+
+# Frontend dependencies and build output
+node_modules/
+dist/
+build/
+
+# Editors and operating system
+.idea/
+.DS_Store

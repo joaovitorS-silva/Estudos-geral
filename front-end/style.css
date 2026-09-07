@@ -1,0 +1,49 @@
+body {
+  font-family: sans-serif;
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+input,
+button {
+  padding: 8px;
+  font-size: 14px;
+}
+
+button {
+  cursor: pointer;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+#mensagemLogin {
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+#mensagemLogin.erro {
+  color: #c0392b;
+}
+
+#mensagemLogin.sucesso {
+  color: #27ae60;
+}
