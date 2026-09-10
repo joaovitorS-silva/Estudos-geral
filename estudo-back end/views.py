@@ -16,6 +16,7 @@ def verificacao_role(role_esperada):
     token = partes[1]
 
     payload = verificar_token(token)
+
     if payload is None :
         return {"msg": "Unauthorized"},401
 
@@ -76,7 +77,7 @@ def criar_user():
                 nome=usuario_validado.nome,
                 email=usuario_validado.email,
                 senha=senha_criptografada,
-                admin=usuario_validado.admin
+                role=usuario_validado.role
             )
 
         session.add(novo_user)
@@ -142,6 +143,9 @@ def listar_todos():
 
 @app.route("/procurar/<int:usr>")
 def filtro_user(usr):
+    resultado = verificacao_role("admin")
+    if resultado is not True:
+        return resultado
     with abrir_session() as session:
         filtro = session.execute(select(Usuario).where(Usuario.id == usr))
         Usuario1 = filtro.scalar_one_or_none()

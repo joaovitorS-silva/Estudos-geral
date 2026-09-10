@@ -3,11 +3,10 @@ from datetime import datetime
 from typing import Optional, List 
 class UsuarioCreate(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-
     nome: str
     email: str
     senha: str
-
+    role: str 
 
 
 class UsuarioLogin(BaseModel):
