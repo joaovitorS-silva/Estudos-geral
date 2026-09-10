@@ -38,5 +38,4 @@ class Usuario(Base):
     email: Mapped[str] = mapped_column(nullable=False, unique=True)
     senha: Mapped[str] = mapped_column(nullable=False,)
     criado_em: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
-    admin: Mapped[bool] = mapped_column(nullable=False, default=False)
-    
+    role: Mapped[str] = mapped_column(nullable=False,default="user")

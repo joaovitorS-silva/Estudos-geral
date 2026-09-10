@@ -41,6 +41,7 @@ def verificar_token(token, tipo_esperado="access"):
                             algorithms=[ALGORITHM]
                             )
         tipo = payload.get("token_type")
+      
 
         if tipo != tipo_esperado:
             return None
@@ -53,7 +54,4 @@ def verificar_token(token, tipo_esperado="access"):
     except jwt.InvalidTokenError:
         return None
 
-refresh = criar_refresh_token(2)
-print(refresh)
-payload = verificar_token(refresh, "refresh")
-print(payload)
+

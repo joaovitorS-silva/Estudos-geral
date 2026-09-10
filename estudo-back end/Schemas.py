@@ -7,7 +7,6 @@ class UsuarioCreate(BaseModel):
     nome: str
     email: str
     senha: str
-    admin: Optional[bool] = False 
 
 
 
@@ -20,6 +19,8 @@ class UsuarioResponse(BaseModel):
     id: int
     nome: str 
     email: str
+    role: str 
+
 
 
 class UsuarioListResponse(BaseModel):

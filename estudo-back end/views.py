@@ -9,13 +9,33 @@ from argon2.exceptions import VerifyMismatchError
 from dependencias import criar_access_token , verificar_token, criar_refresh_token
 
 
+def verificacao_role(role_esperada):
+    
+    authorization = request.headers.get("Authorization")
+    partes = authorization.split()
+    token = partes[1]
+
+    payload = verificar_token(token)
+    if payload is None :
+        return {"msg": "Unauthorized"},401
+
+    usuario_id = payload.get("sub")
+
+     
+    with abrir_session() as session:
+        user = session.get(Usuario, usuario_id)
+    usuario_role = user.role
+
+    if usuario_role  !=role_esperada:
+        return {"erro": "Acesso negado"}, 403    
+    return True
 
 def verificar_login():
     dados = request.get_json()
     try:
         user_validado = UsuarioLogin(**dados)
     except ValidationError:
-        return False
+        return False , None
 
     with abrir_session() as session:
             
@@ -23,14 +43,15 @@ def verificar_login():
         ).scalar_one_or_none()
 
         if not usuario:
-            return False
+            return False, None
     try:
         if not password_hash.verify(usuario.senha,user_validado.senha ):
-            return False
+            return False, None
     except VerifyMismatchError:
-        return False
+        return False , None 
 
-    return True
+    return True ,usuario
+    
 
 
 
@@ -71,10 +92,11 @@ def criar_user():
 
 @app.route("/login", methods=["POST"])
 def login():
-    if verificar_login():
-        access_token = criar_access_token(Usuario.id)
-        refresh_token = criar_refresh_token(Usuario.id)
-        return{"access_token": access_token,"refresh_token": refresh_token   }
+    sucesso,usuario = verificar_login()
+    if sucesso:
+        access_token = criar_access_token(usuario.id) 
+        refresh_token = criar_refresh_token(usuario.id)
+        return{"access_token": access_token,"refresh_token": refresh_token   } 
         
     else: 
         return{"error": "email ou senha incorretos"} ,401
@@ -106,6 +128,7 @@ def listar_todos():
     usuario_id = payload.get("sub")
 
     print(f"o Usuario de id: {usuario_id} estar fazendo a requisição")
+    
     
     with abrir_session() as session:
         todos =  session.query(Usuario).all() 
