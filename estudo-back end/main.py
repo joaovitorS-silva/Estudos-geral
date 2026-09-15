@@ -9,8 +9,13 @@ from flask_cors import CORS
 
 
 app  = Flask(__name__)
+
+from routes.auth import auth_users
+from routes.users import users
+app.register_blueprint(auth_users)
+app.register_blueprint(users)
+
 CORS(app)
-from views import *
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -6,7 +6,7 @@ class UsuarioCreate(BaseModel):
     nome: str
     email: str
     senha: str
-    role: str 
+    role: str = "user"
 
 
 class UsuarioLogin(BaseModel):
