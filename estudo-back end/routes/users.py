@@ -4,8 +4,8 @@ from Schemas import UsuarioCreate, UsuarioResponse ,UsuarioListResponse, Usuario
 from pydantic import ValidationError
 from sqlalchemy import select
 from models import password_hash
-from dependencias import  verificar_token , verificacao_role
-
+from dependencias import  verificar_token , verificacao_role, token_required
+from flask import g
 
 users = Blueprint("/users", __name__ )
 
@@ -42,45 +42,21 @@ def criar_user():
 
 
 @users.route("/listar/usuarios")
+@token_required
 def listar_todos():
-    authorization = request.headers.get("Authorization")
-    
-     #peguei isso daqui da ia, pois oque este codigo faz é o seguinte valida qualquer coisa que colocar 
-        # pois bearer independente dos espaços ou nao, alem de validaro "BEAter""beaARER" e assim vai, odeio FLASK vtnc tudo na mao sapoora
-    if not authorization:
-        return {"erro": "Token não informado"}, 401
-    
-    partes = authorization.split()
-    
-    if len(partes) != 2 or partes[0].lower() != "bearer":
-            return {"erro": "Formato do token inválido"}, 401
-    
-    token = partes[1]
-        #cima ^^^^^^^^^
-    
-    payload = verificar_token(token)
-    
-    if payload is None:
-        return {"msg": "Unauthorized"},401
-    
-    usuario_id = payload.get("sub")
-
-    print(f"o Usuario de id: {usuario_id} estar fazendo a requisição")
-    
-    
     with abrir_session() as session:
         todos =  session.query(Usuario).all() 
         resposta = UsuarioListResponse(usuarios=todos)
+
+        print(g.usuario_id)
     return  resposta.model_dump(),200 , 
 
 
 
-
-
-
 @users.route("/procurar/<int:usr>")
+@token_required
 def filtro_user(usr):
-    resultado = verificacao_role("admin")
+    resultado = verificacao_role()
     if resultado is not True:
         return resultado
     with abrir_session() as session:

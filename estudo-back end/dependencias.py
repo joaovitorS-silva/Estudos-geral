@@ -3,19 +3,51 @@ from dotenv import load_dotenv
 import os
 import jwt
 import datetime
-from flask import request
+from flask import request, g
 from models import  Usuario , abrir_session
 from Schemas import UsuarioLogin
 from pydantic import ValidationError
 from sqlalchemy import select
 from models import password_hash
 from argon2.exceptions import VerifyMismatchError
-
+from functools import wraps
 
 load_dotenv()
 
 JWT_SECRET = os.getenv("JWT_SECRET")
 ALGORITHM = os.getenv("ALGORITHM")
+
+#decorator
+def token_required(funcao):
+    @wraps(funcao)
+    def wrapper(*args, **kwargs):
+        authorization = request.headers.get("Authorization")
+    #peguei isso daqui da ia, pois oque este codigo faz é o seguinte valida qualquer coisa que colocar 
+    # pois bearer independente dos espaços ou nao, alem de validaro "BEAter""beaARER" e assim vai, odeio FLASK vtnc tudo na mao sapoora
+        if not authorization:
+            return {"erro": "Token não informado"}, 401
+        
+        partes = authorization.split()
+
+        if len(partes) != 2 or partes[0].lower() != "bearer":
+            return {"erro": "Formato do token inválido"}, 401
+        token = partes[1]
+    #cima ^^^^^^^^^
+
+        payload = verificar_token(token, "access")
+
+        if payload is None: 
+            return { "Erros": "Token invalido ou expirado"}, 401
+
+        usuario_id = payload.get("sub")
+        # esse (g) faz o seguinte meio que tira o usuario_id do escopo, pois antes dele outras functions 
+        # nao conseguiam acessar quando usamos o decorator pois so iria existir dentro do wrapper
+        g.usuario_id = usuario_id
+
+
+        return funcao(*args , **kwargs)
+    return wrapper
+
 
 
 def criar_access_token(usuario_id, tipo="access"):
@@ -64,26 +96,18 @@ def verificar_token(token, tipo_esperado="access"):
         return None
 
 
-def verificacao_role(role_esperada):
+def verificacao_role(role_esperada="admin"):
+
+    usuario_id = g.usuario_id 
     
-    authorization = request.headers.get("Authorization")
-    partes = authorization.split()
-    token = partes[1]
-
-    payload = verificar_token(token)
-
-    if payload is None :
-        return {"msg": "Unauthorized"},401
-
-    usuario_id = payload.get("sub")
-
-     
     with abrir_session() as session:
         user = session.get(Usuario, usuario_id)
+
     usuario_role = user.role
 
     if usuario_role  !=role_esperada:
-        return {"erro": "Acesso negado"}, 403    
+        return {"erro": "Acesso negado"}, 403  
+      
     return True
 
 
