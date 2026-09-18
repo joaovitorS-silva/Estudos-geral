@@ -4,7 +4,7 @@ from dependencias import criar_access_token , verificar_token, criar_refresh_tok
 
 auth_users = Blueprint("auth", __name__)
 
-@auth_users.route("/login", methods=["POST"])
+@auth_users.route("/users/login", methods=["POST"])
 def login():
     sucesso,usuario = verificar_login()
     if sucesso:

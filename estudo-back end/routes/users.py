@@ -9,7 +9,7 @@ from flask import g
 
 users = Blueprint("/users", __name__ )
 
-@users.route("/usuarios", methods=["POST"])
+@users.route("/users/", methods=["POST"])
 def criar_user():
     dados = request.get_json()
     try:
@@ -41,7 +41,7 @@ def criar_user():
 
 
 
-@users.route("/listar/usuarios")
+@users.route("/users/", methods=["GET"])
 @token_required
 def listar_todos():
     with abrir_session() as session:
@@ -53,7 +53,7 @@ def listar_todos():
 
 
 
-@users.route("/procurar/<int:usr>")
+@users.route("/users/<int:usr>" , methods=["GET"])
 @token_required
 def filtro_user(usr):
     resultado = verificacao_role()
@@ -63,7 +63,7 @@ def filtro_user(usr):
         filtro = session.execute(select(Usuario).where(Usuario.id == usr))
         Usuario1 = filtro.scalar_one_or_none()
         if Usuario1 is None:
-            return{"Error": "usuario nao encontrado"}, 404
+            return{"Error": "usuario nao encontrado"}, 404  
         else:
             user_formatado = UsuarioResponse.model_validate(Usuario1)
         return user_formatado.model_dump(),200
