@@ -4,12 +4,17 @@ const formCriar = document.getElementById("formCriar");
 const nome = document.getElementById("nome");
 const email = document.getElementById("email");
 const senha = document.getElementById("senha");
+const token = localStorage.getItem("access_token");
 
 button?.addEventListener("click", function () {
-  fetch("http://127.0.0.1:5000/listar/usuarios")
+  fetch("http://127.0.0.1:5000/users/", {
+    method: "GET",
+    headers: { "Authorization": `bearer ${token}` },
+  })
     .then((resposta) => resposta.json())
     .then((dados) => {
       lista1.innerHTML = "";
+
       for (const i of dados.usuarios) {
         const li = document.createElement("li");
         const remover = document.createElement("button");
@@ -36,7 +41,7 @@ formCriar.addEventListener("submit", function (e) {
     senha: senhaValue,
     email: emailValue,
   };
-  fetch("http://127.0.0.1:5000/usuarios", {
+  fetch("http://127.0.0.1:5000/users/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -1,7 +1,6 @@
 const loginForm = document.getElementById("formLogin");
 const senhaLogin = document.getElementById("loginSenha");
 const emailLogin = document.getElementById("loginEmail");
-
 loginForm?.addEventListener("submit", async function (e) {
   e.preventDefault();
 
@@ -13,17 +12,20 @@ loginForm?.addEventListener("submit", async function (e) {
     senha: senhaLoingValue,
   };
   try {
-    const resposta = await fetch("http://127.0.0.1:5000/login", {
+    const resposta = await fetch("http://127.0.0.1:5000/users/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+      "Authorization": `bearer ${token}`
       },
       body: JSON.stringify(login),
     });
 
     const dados = await resposta.json();
 
+
     if (resposta.ok) {
+      localStorage.setItem("access_token", dados.access_token)
       console.log("login com sucesso", dados.mensagem);
       loginForm.reset();
     } else {
