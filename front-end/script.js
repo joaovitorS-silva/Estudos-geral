@@ -4,13 +4,9 @@ const formCriar = document.getElementById("formCriar");
 const nome = document.getElementById("nome");
 const email = document.getElementById("email");
 const senha = document.getElementById("senha");
-const token = localStorage.getItem("access_token");
 
 button?.addEventListener("click", function () {
-  fetch("http://127.0.0.1:5000/users/", {
-    method: "GET",
-    headers: { "Authorization": `bearer ${token}` },
-  })
+  fetchAutenticacao("http://127.0.0.1:5000/users/")
     .then((resposta) => resposta.json())
     .then((dados) => {
       lista1.innerHTML = "";
