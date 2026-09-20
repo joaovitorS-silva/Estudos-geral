@@ -16,8 +16,6 @@ async function fetchAutenticacao(rota) {
 
       return NovaResposta;
     } else {
-      
-
       window.location.href = "login.html";
     }
   } else {

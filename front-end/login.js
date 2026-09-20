@@ -1,3 +1,4 @@
+
 const loginForm = document.getElementById("formLogin");
 const senhaLogin = document.getElementById("loginSenha");
 const emailLogin = document.getElementById("loginEmail");
@@ -17,17 +18,13 @@ loginForm?.addEventListener("submit", async function (e) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(login),
-      credentials: "include"
+      credentials: "include",
     });
 
-    const dados = await resposta.json();
-
     if (resposta.ok) {
-      localStorage.setItem("access_token", dados.access_token);
-      localStorage.setItem("refresh_token", dados.refresh_token);
-      console.log("login com sucesso", dados.mensagem);
+      window.location.href = "logado.html";
     } else {
-      console.log("Erro ao login", dados.error);
+      return console.log("deu erro ai no login boy");
     }
 
     loginForm.reset();

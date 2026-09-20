@@ -35,13 +35,18 @@ def acesso_token_accesss():
     resposta.set_cookie("access_token", novo_access_token, httponly=True)
     return resposta , 200
 
-@auth_users.route("/cookie")
-def cokkie():
-    resposta = make_response({"mensagem": "cokkie criado"})
-    resposta.set_cookie("usuario","joao")
+
+@auth_users.route("/users/logout", methods=["POST"])
+def logout():
+    resposta = make_response({"mensagem": "logout foi bem sucesido(eu acho)"})
+
+    resposta.delete_cookie("access_token")
+    resposta.delete_cookie("refresh_token")
+
     return resposta
 
-@auth_users.route("/ver_cookie")
-def ver_cookie():
-    teste = request.cookies.get("usuario")
-    return teste
+
+
+
+
+

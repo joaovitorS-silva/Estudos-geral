@@ -4,7 +4,7 @@ const formCriar = document.getElementById("formCriar");
 const nome = document.getElementById("nome");
 const email = document.getElementById("email");
 const senha = document.getElementById("senha");
-
+const logout = document.getElementById("logout");
 button?.addEventListener("click", function () {
   fetchAutenticacao("http://127.0.0.1:5000/users/")
     .then((resposta) => resposta.json())
@@ -49,4 +49,16 @@ formCriar.addEventListener("submit", function (e) {
       formCriar.reset();
     }),
   );
+});
+
+logout.addEventListener("click", async function () {
+  const resposta = await fetch("http://127.0.0.1:5000/users/logout", {
+    method: "POST",
+    credentials: "include",
+  });
+  if (resposta.ok) {
+    window.location.href = "login.html";
+  } else {
+    return { error: "deu erro na logout boy" };
+  }
 });
