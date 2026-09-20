@@ -48,7 +48,6 @@ def listar_todos():
         todos =  session.query(Usuario).all() 
         resposta = UsuarioListResponse(usuarios=todos)
 
-        print(g.usuario_id)
     return  resposta.model_dump(),200 , 
 
 

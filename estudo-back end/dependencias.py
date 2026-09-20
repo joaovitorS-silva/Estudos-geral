@@ -21,19 +21,11 @@ ALGORITHM = os.getenv("ALGORITHM")
 def token_required(funcao):
     @wraps(funcao)
     def wrapper(*args, **kwargs):
-        authorization = request.headers.get("Authorization")
-    #peguei isso daqui da ia, pois oque este codigo faz é o seguinte valida qualquer coisa que colocar 
-    # pois bearer independente dos espaços ou nao, alem de validaro "BEAter""beaARER" e assim vai, odeio FLASK vtnc tudo na mao sapoora
-        if not authorization:
-            return {"erro": "Token não informado"}, 401
+        token = request.cookies.get("access_token")
+        if not token:
+                return {"erro": "Token não informado"}, 401
         
-        partes = authorization.split()
-
-        if len(partes) != 2 or partes[0].lower() != "bearer":
-            return {"erro": "Formato do token inválido"}, 401
-        token = partes[1]
-    #cima ^^^^^^^^^
-
+    
         payload = verificar_token(token, "access")
 
         if payload is None: 
@@ -52,7 +44,7 @@ def token_required(funcao):
 
 def criar_access_token(usuario_id, tipo="access"):
     data_expiracao= (datetime.datetime.now(datetime.timezone.utc)
-                        + datetime.timedelta(minutes=25)
+                        + datetime.timedelta(seconds=10)
     )
     payload ={"sub": str(usuario_id),
                "exp": data_expiracao, 

@@ -15,7 +15,10 @@ from routes.users import users
 app.register_blueprint(auth_users)
 app.register_blueprint(users)
 
-CORS(app)
+CORS(app,
+     origins="http://127.0.0.1:5500",
+     supports_credentials=True
+     )
 
 if __name__ == "__main__":
     app.run(debug=True)
