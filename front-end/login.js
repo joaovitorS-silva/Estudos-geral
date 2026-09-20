@@ -17,6 +17,7 @@ loginForm?.addEventListener("submit", async function (e) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(login),
+      credentials: "include"
     });
 
     const dados = await resposta.json();
