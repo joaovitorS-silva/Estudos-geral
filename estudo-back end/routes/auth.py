@@ -24,13 +24,16 @@ def login():
 
 @auth_users.route("/refresh", methods=["POST"])
 def acesso_token_accesss():
+
     teste = request.cookies.get("refresh_token")
     payload = verificar_token(teste, "refresh")
+
     if payload is None:
         return({"error": "erro de token INvalido123"}), 401
+    
     usuario_id = payload.get("sub")
     novo_access_token = criar_access_token(usuario_id)
-    print(request.cookies)
+    
     resposta = make_response({"mensagem": "access renovado Cuida"})
     resposta.set_cookie("access_token", novo_access_token, httponly=True)
     return resposta , 200

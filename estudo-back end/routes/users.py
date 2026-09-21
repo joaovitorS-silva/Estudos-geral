@@ -11,7 +11,9 @@ users = Blueprint("/users", __name__ )
 
 @users.route("/users/", methods=["POST"])
 def criar_user():
-    dados = request.get_json()
+    dados = request.get_json(silent=True)
+    if not isinstance(dados, dict):
+        return {"erro": "JSON invalido ou nao informado"}, 400
     try:
         usuario_validado = UsuarioCreate(**dados)
     except ValidationError as erro:
@@ -28,7 +30,7 @@ def criar_user():
                 nome=usuario_validado.nome,
                 email=usuario_validado.email,
                 senha=senha_criptografada,
-                role=usuario_validado.role
+                role="user"
             )
 
         session.add(novo_user)
@@ -44,8 +46,14 @@ def criar_user():
 @users.route("/users/", methods=["GET"])
 @token_required
 def listar_todos():
+
+    resultado = verificacao_role()
+    if resultado is not True:
+        return resultado
+    
     with abrir_session() as session:
-        todos =  session.query(Usuario).all() 
+        todos =  session.query(Usuario).all()
+
         resposta = UsuarioListResponse(usuarios=todos)
 
     return  resposta.model_dump(),200 , 

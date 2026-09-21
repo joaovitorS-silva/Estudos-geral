@@ -93,8 +93,8 @@ def verificacao_role(role_esperada="admin"):
     usuario_id = g.usuario_id 
     
     with abrir_session() as session:
-        user = session.get(Usuario, usuario_id)
-
+        user = session.get(Usuario, usuario_id) 
+        
     usuario_role = user.role
 
     if usuario_role  !=role_esperada:

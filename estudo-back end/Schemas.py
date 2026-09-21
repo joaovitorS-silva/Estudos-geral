@@ -1,12 +1,11 @@
-from pydantic import BaseModel, EmailStr , ConfigDict
+from pydantic import BaseModel, EmailStr , ConfigDict, Field
 from datetime import datetime
 from typing import Optional, List 
 class UsuarioCreate(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    nome: str
-    email: str
-    senha: str
-    role: str = "user"
+    nome: str = Field(min_length=2, max_length=100)
+    email: EmailStr
+    senha: str = Field(min_length=2, max_length=100)
 
 
 class UsuarioLogin(BaseModel):
