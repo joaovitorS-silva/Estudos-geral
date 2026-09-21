@@ -46,14 +46,13 @@ def criar_user():
 @users.route("/users/", methods=["GET"])
 @token_required
 def listar_todos():
-
     resultado = verificacao_role()
+
     if resultado is not True:
         return resultado
     
     with abrir_session() as session:
         todos =  session.query(Usuario).all()
-
         resposta = UsuarioListResponse(usuarios=todos)
 
     return  resposta.model_dump(),200 , 

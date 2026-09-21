@@ -15,8 +15,10 @@ from functools import wraps
 load_dotenv()
 
 JWT_SECRET = os.getenv("JWT_SECRET")
-ALGORITHM = os.getenv("ALGORITHM")
+ALGORITHM = os.getenv("ALGORITHM", "HS256")
 
+if not JWT_SECRET:
+    return RuntimeError("JWT_SECRET não foi definida no ambiente")
 #decorator
 def token_required(funcao):
     @wraps(funcao)
@@ -89,16 +91,16 @@ def verificar_token(token, tipo_esperado="access"):
 
 
 def verificacao_role(role_esperada="admin"):
-
     usuario_id = g.usuario_id 
     
     with abrir_session() as session:
-        user = session.get(Usuario, usuario_id) 
+        usuario = session.get(Usuario, int (usuario_id)) 
         
-    usuario_role = user.role
+        if usuario is None:
+            return {"erro": "Usuario do token nao existe"}, 401        
 
-    if usuario_role  !=role_esperada:
-        return {"erro": "Acesso negado"}, 403  
+        if usuario_role  !=role_esperada:
+            return {"erro": "Acesso negado"}, 403  
       
     return True
 
