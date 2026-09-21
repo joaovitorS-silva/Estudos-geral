@@ -1,7 +1,7 @@
 import jwt
 from dotenv import load_dotenv
 import os
-import jwt
+
 import datetime
 from flask import request, g
 from models import  Usuario , abrir_session
@@ -18,7 +18,7 @@ JWT_SECRET = os.getenv("JWT_SECRET")
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
 
 if not JWT_SECRET:
-    return RuntimeError("JWT_SECRET não foi definida no ambiente")
+    raise RuntimeError("JWT_SECRET não foi definida no ambiente")
 #decorator
 def token_required(funcao):
     @wraps(funcao)
@@ -99,7 +99,7 @@ def verificacao_role(role_esperada="admin"):
         if usuario is None:
             return {"erro": "Usuario do token nao existe"}, 401        
 
-        if usuario_role  !=role_esperada:
+        if usuario.role !=role_esperada:
             return {"erro": "Acesso negado"}, 403  
       
     return True
