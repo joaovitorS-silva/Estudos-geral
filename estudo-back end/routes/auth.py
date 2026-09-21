@@ -7,6 +7,7 @@ auth_users = Blueprint("auth", __name__)
 @auth_users.route("/users/login", methods=["POST"])
 def login():
     sucesso,usuario = verificar_login()
+    
     if sucesso:
         access_token = criar_access_token(usuario.id) 
         refresh_token = criar_refresh_token(usuario.id)
@@ -33,7 +34,7 @@ def acesso_token_accesss():
     
     usuario_id = payload.get("sub")
     novo_access_token = criar_access_token(usuario_id)
-    
+
     resposta = make_response({"mensagem": "access renovado Cuida"})
     resposta.set_cookie("access_token", novo_access_token, httponly=True)
     return resposta , 200

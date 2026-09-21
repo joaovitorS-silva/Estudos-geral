@@ -46,7 +46,7 @@ def token_required(funcao):
 
 def criar_access_token(usuario_id, tipo="access"):
     data_expiracao= (datetime.datetime.now(datetime.timezone.utc)
-                        + datetime.timedelta(seconds=10)
+                        + datetime.timedelta(minutes=15)
     )
     payload ={"sub": str(usuario_id),
                "exp": data_expiracao, 
@@ -107,7 +107,11 @@ def verificacao_role(role_esperada="admin"):
 
 
 def verificar_login():
-    dados = request.get_json()
+    dados = request.get_json(silent=True)
+
+    if not isinstance(dados, dict):
+        return False, None
+    
     try:
         user_validado = UsuarioLogin(**dados)
     except ValidationError:
