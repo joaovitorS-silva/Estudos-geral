@@ -1,7 +1,7 @@
 import jwt
 from dotenv import load_dotenv
 import os
-
+import logging
 import datetime
 from flask import request, g
 from models import  Usuario , abrir_session
@@ -11,6 +11,8 @@ from sqlalchemy import select
 from models import password_hash
 from argon2.exceptions import VerifyMismatchError
 from functools import wraps
+
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
@@ -25,12 +27,23 @@ def token_required(funcao):
     def wrapper(*args, **kwargs):
         token = request.cookies.get("access_token")
         if not token:
+                logger.warning(
+                    "token nao foi INformado metodo=%s rota=%s",
+                    request.method,
+                    request.path
+                    )
                 return {"erro": "Token não informado"}, 401
         
     
         payload = verificar_token(token, "access")
 
         if payload is None: 
+            logger.warning(
+                "tentativa de acesso com token invalido ou expirado"
+                "metodo=%s rota=%s",
+                request.method,
+                request.path
+            )
             return { "Erros": "Token invalido ou expirado"}, 401
 
         usuario_id = payload.get("sub")
@@ -46,7 +59,7 @@ def token_required(funcao):
 
 def criar_access_token(usuario_id, tipo="access"):
     data_expiracao= (datetime.datetime.now(datetime.timezone.utc)
-                        + datetime.timedelta(minutes=15)
+                        + datetime.timedelta(seconds=5)
     )
     payload ={"sub": str(usuario_id),
                "exp": data_expiracao, 
@@ -97,9 +110,16 @@ def verificacao_role(role_esperada="admin"):
         usuario = session.get(Usuario, int (usuario_id)) 
         
         if usuario is None:
+            logger.warning("token pertence a usuario inexistente usuario_id=%s", usuario_id)
             return {"erro": "Usuario do token nao existe"}, 401        
 
         if usuario.role !=role_esperada:
+            logger.warning(
+                "Acesso negado usuario_id=%s role=%s role_necessaria=%s",
+                usuario.id,
+                usuario.role,
+               role_esperada,
+            )
             return {"erro": "Acesso negado"}, 403  
       
     return True

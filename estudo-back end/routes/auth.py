@@ -1,5 +1,6 @@
 from flask import  request, Blueprint, make_response
-
+import logging
+logger = logging.getLogger(__name__)
 from dependencias import criar_access_token , verificar_token, criar_refresh_token, verificar_login
 
 auth_users = Blueprint("auth", __name__)
@@ -17,10 +18,15 @@ def login():
         resposta.set_cookie("access_token", access_token, httponly=True)
         resposta.set_cookie("refresh_token", refresh_token, httponly=True)
 
+        logger.info(
+            "login realizado usuario_id=%s",
+            usuario.id
+        )
+
         return resposta 
-        
-    else: 
-        return{"error": "email ou senha incorretos"} ,401
+    logger.warning("Tentaviva de Login com credenciasis invalidas")
+    
+    return{"error": "email ou senha incorretos"} ,401
 
 
 @auth_users.route("/refresh", methods=["POST"])
@@ -30,13 +36,17 @@ def acesso_token_accesss():
     payload = verificar_token(teste, "refresh")
 
     if payload is None:
-        return({"error": "erro de token INvalido123"}), 401
+        logger.warning("Tentativa de refresh com token ausente ou invalido")
+        return {"error": "token invalido"}, 401
     
     usuario_id = payload.get("sub")
     novo_access_token = criar_access_token(usuario_id)
 
     resposta = make_response({"mensagem": "access renovado Cuida"})
     resposta.set_cookie("access_token", novo_access_token, httponly=True)
+
+    logger.info("Access Token foi renovado usuario_id=%s", usuario_id)
+
     return resposta , 200
 
 
@@ -46,7 +56,9 @@ def logout():
 
     resposta.delete_cookie("access_token")
     resposta.delete_cookie("refresh_token")
-
+    logger.info(
+        "Logout realizado com Sucesso"
+    )
     return resposta
 
 

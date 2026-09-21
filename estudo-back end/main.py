@@ -1,13 +1,12 @@
+import logging
 from flask import Flask 
 from flask_cors import CORS
 
-
-
-#from dependencias import criar_access_token , verificar_token
-
-
-
-
+logging.basicConfig(
+     level=logging.INFO,
+     format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+          #data e horario |  nivel: INFOR, WARNING | ARQUIVO QUE FEROU O LOG| MENSAGEM
+)
 app  = Flask(__name__)
 
 from routes.auth import auth_users

@@ -6,6 +6,9 @@ from sqlalchemy import select
 from models import password_hash
 from dependencias import  verificar_token , verificacao_role, token_required
 from flask import g
+import logging
+
+logger = logging.getLogger(__name__)
 
 users = Blueprint("/users", __name__ )
 
@@ -23,21 +26,30 @@ def criar_user():
         usuario = session.execute(select(Usuario).where(Usuario.email == usuario_validado.email)
  ).scalar_one_or_none()
         if usuario is not None:
+            logger.warning(
+                "o usuario com o email=%s ja existe",
+                usuario_validado.email
+            )
             return {"Erro": "Usuario ja cadastrado"}, 409
     
         senha_criptografada = password_hash.hash(usuario_validado.senha)
+
         novo_user = Usuario(
                 nome=usuario_validado.nome,
                 email=usuario_validado.email,
                 senha=senha_criptografada,
                 role="user"
             )
-
+       
         session.add(novo_user)
         session.commit()
         session.refresh(novo_user)
 
         usuario_formatado = UsuarioResponse.model_validate(novo_user)
+        logger.info(
+                    "Usuario foi criado com sucesso usuario_id=%s",
+                    usuario_formatado.id
+                )
     return usuario_formatado.model_dump(),201
 
 
