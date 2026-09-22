@@ -9,3 +9,4 @@ python-dotenv==1.1.1
 SQLAlchemy==2.0.52
 email-validator
 PyJWT
+pytest==9.1.1
