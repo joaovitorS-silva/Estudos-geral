@@ -1,12 +1,13 @@
-from flask import render_template ,request, Blueprint
-from models import  Usuario , abrir_session
-from Schemas import UsuarioCreate, UsuarioResponse ,UsuarioListResponse, UsuarioLogin
+import logging
+
+from flask import Blueprint, request
 from pydantic import ValidationError
 from sqlalchemy import select
-from models import password_hash
-from dependencias import  verificar_token , verificacao_role, token_required
-from flask import g
-import logging
+
+from DateBase.models import Usuario, abrir_session, password_hash
+from DateBase.Schemas import UsuarioCreate, UsuarioListResponse, UsuarioResponse
+from dependencias import token_required
+from verificacoes import verificacao_role
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +21,7 @@ def criar_user():
     try:
         usuario_validado = UsuarioCreate(**dados)
     except ValidationError as erro:
-        return {"erro ": erro.errors()}, 400
+        return {"erro ": "error que nao sei nomear"}, 400
 
     with abrir_session() as session:
         usuario = session.execute(select(Usuario).where(Usuario.email == usuario_validado.email)

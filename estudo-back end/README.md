@@ -43,11 +43,13 @@ estudo-back end/
 │   └── users.py
 ├── .env.example
 ├── alembic.ini
-├── dependencias.py
+├── dependencias.py       # Decorator de autenticação
 ├── main.py
 ├── models.py
 ├── requirements.txt
 ├── Schemas.py
+├── tokens.py             # Criação e validação de JWT
+├── verificacoes.py       # Login e permissões
 └── README.md
 ```
 

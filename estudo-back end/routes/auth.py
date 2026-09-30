@@ -1,7 +1,11 @@
-from flask import  request, Blueprint, make_response
 import logging
+
+from flask import Blueprint, make_response, request
+
+from tokens import criar_access_token, criar_refresh_token, verificar_token
+from verificacoes import verificar_login
+
 logger = logging.getLogger(__name__)
-from dependencias import criar_access_token , verificar_token, criar_refresh_token, verificar_login
 
 auth_users = Blueprint("auth", __name__)
 

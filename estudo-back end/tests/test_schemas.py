@@ -1,13 +1,13 @@
 import pytest
 from pydantic import ValidationError
-from Schemas import UsuarioCreate
+from DateBase.Schemas import UsuarioCreate
 
 def test_rejeitar_email_invalido():
     with pytest.raises(ValidationError):
         UsuarioCreate(
             nome="João",
             email="email-invlaido",
-            senha="123",
+            senha="1234567890109k",
         )
 def test_criar_usuario_valido():
     usuario =  UsuarioCreate(
