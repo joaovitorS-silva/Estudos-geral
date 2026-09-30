@@ -10,18 +10,21 @@ button?.addEventListener("click", function () {
     .then((resposta) => resposta.json())
     .then((dados) => {
       lista1.innerHTML = "";
-
-      for (const i of dados.usuarios) {
-        const li = document.createElement("li");
-        const remover = document.createElement("button");
-        remover.innerText = "remover";
-        li.innerText = `nome:${i.nome}`;
-        lista1.appendChild(li);
-        lista1.appendChild(remover);
-        remover.addEventListener("click", function () {
-          li.remove();
-          remover.remove();
-        });
+      if (resposta.ok) {
+        for (const i of dados.usuarios) {
+          const li = document.createElement("li");
+          const remover = document.createElement("button");
+          remover.innerText = "remover";
+          li.innerText = `nome:${i.nome}`;
+          lista1.appendChild(li);
+          lista1.appendChild(remover);
+          remover.addEventListener("click", function () {
+            li.remove();
+            remover.remove();
+          });
+        }
+      } else {
+        return ({ error: "Error a chamada da api" }, 403);
       }
     });
 });
@@ -45,8 +48,12 @@ formCriar.addEventListener("submit", function (e) {
     body: JSON.stringify(novoUser),
   }).then((resposta) =>
     resposta.json().then((dados) => {
-      console.log("Usuario Criado", dados);
-      formCriar.reset();
+      if (resposta.ok) {
+        console.log("Usuario Criado", dados);
+        formCriar.reset();
+      } else {
+        return ({ error: "ERROr ao criar o usuario" }, 409);
+      }
     }),
   );
 });
