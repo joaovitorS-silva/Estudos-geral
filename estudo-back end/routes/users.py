@@ -1,6 +1,6 @@
 import logging
 
-from flask import Blueprint, request
+from flask import Blueprint, g, request
 from pydantic import ValidationError
 from sqlalchemy import select
 
@@ -12,6 +12,20 @@ from verificacoes import verificacao_role
 logger = logging.getLogger(__name__)
 
 users = Blueprint("/users", __name__ )
+
+@users.route("/user/me", methods=["GET"])
+@token_required
+def meus_dados():
+    with abrir_session() as session:
+        usuario = session.execute(
+            select(Usuario).where(Usuario.id == g.usuario_id)
+        ).scalar_one_or_none()
+        if usuario is None:
+            return {"erro": "usuario nao encontrado"}, 404
+
+        resposta = UsuarioResponse.model_validate(usuario)
+        return resposta.model_dump(), 200
+
 
 @users.route("/users/", methods=["POST"])
 def criar_user():
@@ -86,6 +100,5 @@ def filtro_user(usr):
         else:
             user_formatado = UsuarioResponse.model_validate(Usuario1)
         return user_formatado.model_dump(),200
-
 
 

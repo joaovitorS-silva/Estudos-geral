@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 def token_required(funcao):
-    """Valida o cookie de acesso e disponibiliza o usuário em g.usuario_id."""
+    
     @wraps(funcao)
     def wrapper(*args, **kwargs):
         token = request.cookies.get("access_token")

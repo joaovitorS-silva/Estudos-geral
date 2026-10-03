@@ -129,6 +129,7 @@ A API será iniciada em `http://127.0.0.1:5000`.
 | `POST` | `/refresh` | Refresh token | Gera um novo access token. |
 | `POST` | `/users/logout` | Público | Remove os cookies de access e refresh token. |
 | `GET` | `/users/` | Administrador | Lista os usuários cadastrados. |
+| `GET` | `/user/me` | Autenticado | Retorna os próprios dados (`id`, `nome`, `email` e `role`), sem a senha. |
 | `GET` | `/users/<id>` | Administrador | Busca um usuário pelo ID. |
 
 ## Fluxo de autenticação
