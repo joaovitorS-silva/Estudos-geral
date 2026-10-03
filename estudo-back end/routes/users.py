@@ -101,4 +101,3 @@ def filtro_user(usr):
             user_formatado = UsuarioResponse.model_validate(Usuario1)
         return user_formatado.model_dump(),200
 
-

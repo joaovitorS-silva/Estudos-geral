@@ -58,3 +58,21 @@ def test_usuario_removido(client):
 
     assert response.status_code == 404
     assert response.get_json() == {"erro": "usuario nao encontrado"}
+
+
+def test_id_do_token_convertido_para_inteiro(client):
+    from flask import g
+
+    client.set_cookie("access_token", criar_access_token(1))
+    assert client.get("/user/me").status_code == 200
+    assert type(g.usuario_id) is int
+    assert g.usuario_id == 1
+
+
+def test_rejeita_id_nao_numerico(client):
+    client.set_cookie("access_token", criar_access_token("abc"))
+
+    response = client.get("/user/me")
+
+    assert response.status_code == 401
+    assert response.get_json() == {"erro": "ID do usuario invalido no token"}

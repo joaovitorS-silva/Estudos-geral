@@ -1,8 +1,7 @@
-"""Decorator de autenticação das rotas protegidas."""
+
 
 import logging
 from functools import wraps
-
 from flask import g, request
 
 from tokens import verificar_token
@@ -32,7 +31,11 @@ def token_required(funcao):
             )
             return {"Erros": "Token invalido ou expirado"}, 401
 
-        g.usuario_id = payload.get("sub")
+        try:
+            g.usuario_id = int(payload.get("sub"))
+        except (TypeError, ValueError):
+            return {"erro": "ID do usuario invalido no token"}, 401
+
         return funcao(*args, **kwargs)
 
     return wrapper
